@@ -10,6 +10,10 @@
   <img src="https://img.shields.io/badge/License-Apache--2.0-green?style=for-the-badge" alt="License">
 </p>
 
+<p align="center">
+  <img src="assets/cyberqwen_master_benchmark_showcase.png" alt="CyberQwen-2B Master Benchmark Showcase" width="100%">
+</p>
+
 **CyberQwen-2B** is an ultra-lightweight, high-density cybersecurity Small Language Model (SLM) engineered to run **100% offline and air-gapped** on standard consumer hardware (including laptops without dedicated GPUs).
 
 Trained on a curated, high-diversity 10,000-row foundation dataset across 10 security domains using [Adaption AI's](https://adaptionlabs.ai) AutoScientist, CyberQwen-2B achieves an objective **+44.9% domain performance gain** over the baseline Qwen 3.5 2B model while maintaining sub-3-second latency on an everyday Intel Core i5 processor.
@@ -38,6 +42,14 @@ Trained on a curated, high-diversity 10,000-row foundation dataset across 10 sec
 | **Model Size** | 2.0 Billion Parameters | Dense hybrid linear-attention architecture |
 | **Adapter Rank / Alpha** | $r = 64, \alpha = 128$ | High-rank adaptation targeting all linear projection layers |
 | **Loss Convergence** | 1.429 $\rightarrow$ 1.121 | Optimal convergence within 2–3 epochs |
+
+<p align="center">
+  <img src="assets/linkedin_slide_1_dataset_quality.png" alt="Dataset Quality Score 9.2" width="49%">
+  <img src="assets/linkedin_slide_2_dataset_diversity.png" alt="Dataset Diversity Score 0.81" width="49%">
+</p>
+<p align="center">
+  <img src="assets/linkedin_slide_3_training_winrate.png" alt="Training Winrates and LLM Judge Evaluation" width="98%">
+</p>
 
 ---
 
@@ -129,6 +141,10 @@ Once downloaded, build with `ollama create cybersec-qwen -f Modelfile`.
 ---
 
 ## 🐍 Python Automation & Log Triage CLI
+
+<p align="center">
+  <img src="assets/post_image_1_terminal_demo.png" alt="CyberQwen-2B Live CLI Triage Demo" width="100%">
+</p>
 
 This repository includes `cyber_triage.py`, a zero-dependency Python tool to integrate CyberQwen-2B into automated workflows:
 

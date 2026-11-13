@@ -22,5 +22,6 @@ ENV/
 .idea/
 .vscode/
 
-# Local logs
+# Local logs and drafts
 *.log
+linkedin_*.txt
