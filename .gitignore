@@ -1,0 +1,26 @@
+# Binary model weights (Store on Hugging Face / Ollama, not GitHub git commits)
+*.gguf
+*.bin
+*.safetensors
+*.tgz
+*.tar.gz
+*.zst
+
+# Python cache & virtualenvs
+__pycache__/
+*.py[cod]
+*$py.class
+.venv/
+venv/
+ENV/
+
+# System and editor files
+.DS_Store
+*.swp
+*.swo
+*~
+.idea/
+.vscode/
+
+# Local logs
+*.log

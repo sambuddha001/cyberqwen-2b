@@ -60,28 +60,43 @@ CyberQwen-2B Knowledge Hierarchy
 
 ---
 
-## 🚀 Quickstart: Running Locally with Ollama
+## 🚀 Quickstart: Running Locally
 
-### Prerequisites
-- [Ollama](https://ollama.com) installed (`curl -fsSL https://ollama.ai/install.sh | sh`)
-- 4 GB to 8 GB System RAM
-- Linux, macOS, or Windows (WSL2)
-
-### 1. Clone the Repository
+### Option A: One-Click Automated Setup
 ```bash
-git clone https://github.com/your-username/cyberqwen-2b.git
+git clone https://github.com/sambuddha001/cyberqwen-2b.git
 cd cyberqwen-2b
+chmod +x setup.sh
+./setup.sh
 ```
 
-### 2. Build the Model in Ollama
+### Option B: Manual Setup with Ollama
 ```bash
+# 1. Build model from Modelfile
 ollama create cybersec-qwen -f Modelfile
+
+# 2. Launch interactive session
+ollama run cybersec-qwen --think=false
 ```
 
-### 3. Launch & Chat
+---
+
+## 🐍 Python Automation & Log Triage CLI
+
+This repository includes `cyber_triage.py`, a zero-dependency Python tool to integrate CyberQwen-2B into automated workflows:
+
 ```bash
-# Run interactive session (thinking output hidden by default for speed)
-ollama run cybersec-qwen --think=false
+# 1. Pipe raw log files directly for triage & IOC extraction:
+cat /var/log/auth.log | python3 cyber_triage.py --analyze-log
+
+# 2. Automated Sigma rule generation:
+python3 cyber_triage.py --generate-sigma "Detect mimikatz LSASS memory dumping via Event ID 10"
+
+# 3. Automated YARA rule generation:
+python3 cyber_triage.py --generate-yara "Detect UPX-packed executables"
+
+# 4. Direct CLI questions:
+python3 cyber_triage.py -q "Explain how Kerberoasting works and how to mitigate it."
 ```
 
 ---
