@@ -1,6 +1,7 @@
 # CyberQwen-2B: Air-Gapped Cybersecurity SLM
 
 <p align="center">
+  <a href="https://github.com/sambuddha001/cyberqwen-2b/releases/tag/v1.0.0"><img src="https://img.shields.io/badge/Release-v1.0.0%20(Adapter%2084MB)-brightgreen?style=for-the-badge&logo=github" alt="Release"></a>
   <img src="https://img.shields.io/badge/Model-Qwen3.5--2B-blue?style=for-the-badge&logo=ai" alt="Model">
   <img src="https://img.shields.io/badge/Fine--Tuning-LoRA%20(PEFT)-orange?style=for-the-badge" alt="Fine-Tuning">
   <img src="https://img.shields.io/badge/Domain%20Gain-%2B44.9%25-brightgreen?style=for-the-badge" alt="Domain Gain">
@@ -62,7 +63,9 @@ CyberQwen-2B Knowledge Hierarchy
 
 ## 🚀 Quickstart: Running Locally
 
-### Option A: One-Click Automated Setup
+### Option A: One-Click Automated Setup (Recommended)
+Clone the repository and run the setup script. The script automatically detects Ollama, downloads the fine-tuned LoRA GGUF adapter (84 MB) from [GitHub Release v1.0.0](https://github.com/sambuddha001/cyberqwen-2b/releases/tag/v1.0.0), builds the custom model, and installs the `cyber-qwen` CLI launcher:
+
 ```bash
 git clone https://github.com/sambuddha001/cyberqwen-2b.git
 cd cyberqwen-2b
@@ -70,14 +73,58 @@ chmod +x setup.sh
 ./setup.sh
 ```
 
-### Option B: Manual Setup with Ollama
+Once installed, run the model anytime with:
 ```bash
-# 1. Build model from Modelfile
+cyber-qwen
+```
+
+---
+
+### Option B: Manual Setup via GitHub Releases
+If you prefer building manually without running the installer script:
+
+```bash
+# 1. Clone the repository
+git clone https://github.com/sambuddha001/cyberqwen-2b.git
+cd cyberqwen-2b
+
+# 2. Download the 84 MB LoRA GGUF adapter from GitHub Releases
+curl -L -o cybersec_adapter.gguf "https://github.com/sambuddha001/cyberqwen-2b/releases/download/v1.0.0/cybersec_adapter.gguf"
+
+# 3. Build model from Modelfile
 ollama create cybersec-qwen -f Modelfile
 
-# 2. Launch interactive session
+# 4. Launch interactive session (with thinking mode bypassed for instant CPU response)
 ollama run cybersec-qwen --think=false
 ```
+
+---
+
+### Option C: Hugging Face Hub Setup
+You can also download and manage the adapter using Hugging Face Hub:
+
+#### Using Hugging Face CLI:
+```bash
+# Install huggingface_hub if needed
+pip install huggingface_hub
+
+# Download the GGUF adapter directly into the repository directory
+huggingface-cli download sambuddha001/CyberQwen-2B-GGUF cybersec_adapter.gguf --local-dir .
+```
+
+#### Using Python:
+```python
+from huggingface_hub import hf_hub_download
+
+adapter_path = hf_hub_download(
+    repo_id="sambuddha001/CyberQwen-2B-GGUF",
+    filename="cybersec_adapter.gguf",
+    local_dir="."
+)
+print(f"Downloaded adapter to: {adapter_path}")
+```
+
+Once downloaded, build with `ollama create cybersec-qwen -f Modelfile`.
 
 ---
 

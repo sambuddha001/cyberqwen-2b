@@ -23,11 +23,31 @@ if ! curl -s http://localhost:11434/api/tags &> /dev/null; then
     sleep 3
 fi
 
-# 3. Build the model from Modelfile
+# 3. Ensure the fine-tuned LoRA GGUF adapter exists (auto-download from GitHub Release if missing)
+ADAPTER_FILE="cybersec_adapter.gguf"
+RELEASE_URL="https://github.com/sambuddha001/cyberqwen-2b/releases/download/v1.0.0/cybersec_adapter.gguf"
+
+if [ ! -f "$ADAPTER_FILE" ]; then
+    echo "[*] Adapter file '$ADAPTER_FILE' not found locally."
+    echo "[*] Downloading fine-tuned LoRA GGUF adapter (84 MB) from GitHub Release v1.0.0..."
+    if command -v curl &> /dev/null; then
+        curl -L -f --progress-bar -o "$ADAPTER_FILE" "$RELEASE_URL"
+    elif command -v wget &> /dev/null; then
+        wget --show-progress -O "$ADAPTER_FILE" "$RELEASE_URL"
+    else
+        echo "[X] Error: Neither curl nor wget is installed. Please download $RELEASE_URL manually."
+        exit 1
+    fi
+    echo "[+] Downloaded $ADAPTER_FILE successfully."
+else
+    echo "[+] Found existing adapter: $ADAPTER_FILE"
+fi
+
+# 4. Build the model from Modelfile
 echo "[*] Creating cybersec-qwen model in Ollama..."
 ollama create cybersec-qwen -f Modelfile
 
-# 4. Create local CLI launcher
+# 5. Create local CLI launcher
 LAUNCHER_PATH="$HOME/.local/bin/cyber-qwen"
 mkdir -p "$HOME/.local/bin"
 
