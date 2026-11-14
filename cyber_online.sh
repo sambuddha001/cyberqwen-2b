@@ -25,6 +25,7 @@ cleanup() {
     kill "$WEBUI_PID" 2>/dev/null || true
     kill "$TUNNEL_PID" 2>/dev/null || true
     rm -f /tmp/cf_tunnel.log
+    rm -f "$HOME/.cyber_server_url" /tmp/cyber_server_url
     echo "[+] Done. Model is offline."
     exit 0
 }
@@ -54,6 +55,11 @@ for i in {1..20}; do
 done
 
 if [ "$FOUND" -eq 1 ]; then
+    echo "$URL" > "$HOME/.cyber_server_url"
+    echo "$URL" > /tmp/cyber_server_url
+    if command -v wl-copy > /dev/null 2>&1; then
+        echo -n "$URL" | wl-copy 2>/dev/null || true
+    fi
     echo ""
     echo "=================================================================="
     echo "   🚀 CyberQwen-2B is LIVE Online!                                "
