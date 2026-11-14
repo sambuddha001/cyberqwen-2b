@@ -315,7 +315,9 @@ class WebUIHandler(BaseHTTPRequestHandler):
                 "think": False,
                 "options": {
                     "temperature": 0.2,
-                    "top_p": 0.9
+                    "top_p": 0.9,
+                    "num_thread": 4,
+                    "num_ctx": 3072
                 }
             }
 
