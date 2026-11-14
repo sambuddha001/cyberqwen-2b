@@ -5,6 +5,7 @@ Lightweight, zero-dependency, ChatGPT-style responsive web interface.
 Access from any phone, tablet, or PC on your local Wi-Fi or via tunnel.
 """
 
+import os
 import sys
 import json
 import urllib.request
@@ -13,7 +14,7 @@ from http.server import ThreadingHTTPServer, BaseHTTPRequestHandler
 
 OLLAMA_API_URL = "http://127.0.0.1:11434/api/generate"
 MODEL_NAME = "cybersec-qwen"
-PORT = 8080
+PORT = int(os.environ.get("PORT", 8080))
 
 HTML_PAGE = """<!DOCTYPE html>
 <html lang="en">
