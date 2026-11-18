@@ -20,7 +20,10 @@ HTML_PAGE = """<!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover, interactive-widget=resizes-content">
+  <meta name="theme-color" content="#0c0e14">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <title>cybersec@qwen-v2: ~ (The Hack Machine)</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -40,10 +43,16 @@ HTML_PAGE = """<!DOCTYPE html>
       --term-muted: #6e7681;
       --term-cursor: #00ff66;
       --font-mono: 'JetBrains Mono', 'Fira Code', ui-monospace, Menlo, Monaco, Consolas, monospace;
+      --sat: env(safe-area-inset-top, 0px);
+      --sab: env(safe-area-inset-bottom, 0px);
+      --sal: env(safe-area-inset-left, 0px);
+      --sar: env(safe-area-inset-right, 0px);
     }
     * { box-sizing: border-box; margin: 0; padding: 0; }
+    
     html, body {
       height: 100%;
+      height: 100dvh;
       background-color: #07090e;
       color: var(--term-text);
       font-family: var(--font-mono);
@@ -51,24 +60,28 @@ HTML_PAGE = """<!DOCTYPE html>
       display: flex;
       justify-content: center;
       align-items: center;
+      touch-action: manipulation;
+      -webkit-font-smoothing: antialiased;
     }
 
     /* Terminal Window Container */
     #terminal-window {
       width: 100%;
+      height: 100%;
       height: 100dvh;
       max-width: 1400px;
       display: flex;
       flex-direction: column;
       background: var(--term-bg);
-      border: 1px solid var(--term-border);
-      box-shadow: 0 10px 40px rgba(0, 0, 0, 0.8), 0 0 1px 1px rgba(0, 255, 102, 0.15);
+      border: none;
       position: relative;
     }
     @media (min-width: 900px) {
       #terminal-window {
         height: 96dvh;
         border-radius: 10px;
+        border: 1px solid var(--term-border);
+        box-shadow: 0 10px 40px rgba(0, 0, 0, 0.8), 0 0 1px 1px rgba(0, 255, 102, 0.15);
         overflow: hidden;
       }
     }
@@ -90,13 +103,14 @@ HTML_PAGE = """<!DOCTYPE html>
     header {
       background: #0f131d;
       border-bottom: 1px solid var(--term-border);
-      padding: 10px 16px;
+      padding: calc(8px + var(--sat)) calc(12px + var(--sar)) 8px calc(12px + var(--sal));
       display: flex;
       align-items: center;
       justify-content: space-between;
       user-select: none;
       flex-shrink: 0;
       z-index: 12;
+      min-height: 48px;
     }
     .window-controls {
       display: flex;
@@ -122,14 +136,17 @@ HTML_PAGE = """<!DOCTYPE html>
       color: var(--term-muted);
       display: flex;
       align-items: center;
-      gap: 8px;
+      gap: 6px;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
     }
     .window-title .active-host { color: var(--term-green); font-weight: 700; }
     .window-title .badge {
       background: rgba(0, 255, 102, 0.1);
       color: var(--term-green);
       border: 1px solid rgba(0, 255, 102, 0.3);
-      font-size: 0.7rem;
+      font-size: 0.68rem;
       padding: 2px 6px;
       border-radius: 4px;
       text-transform: uppercase;
@@ -139,21 +156,24 @@ HTML_PAGE = """<!DOCTYPE html>
     .window-actions {
       display: flex;
       align-items: center;
-      gap: 12px;
-      font-size: 0.8rem;
+      gap: 8px;
     }
     .btn-clear {
       background: transparent;
       border: 1px solid var(--term-border);
       color: var(--term-muted);
-      padding: 4px 10px;
+      padding: 5px 10px;
       border-radius: 4px;
       cursor: pointer;
       font-family: var(--font-mono);
-      font-size: 0.75rem;
+      font-size: 0.72rem;
       transition: all 0.2s;
+      min-height: 32px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
     }
-    .btn-clear:hover {
+    .btn-clear:active, .btn-clear:hover {
       border-color: var(--term-red);
       color: var(--term-red);
       background: rgba(255, 85, 85, 0.1);
@@ -163,39 +183,71 @@ HTML_PAGE = """<!DOCTYPE html>
     #terminal-body {
       flex: 1;
       overflow-y: auto;
-      padding: 16px 20px;
+      overflow-x: hidden;
+      -webkit-overflow-scrolling: touch;
+      padding: 12px 14px;
       display: flex;
       flex-direction: column;
-      gap: 14px;
+      gap: 12px;
       scroll-behavior: smooth;
-      font-size: 0.92rem;
-      line-height: 1.6;
+      font-size: 0.88rem;
+      line-height: 1.55;
     }
-    #terminal-body::-webkit-scrollbar { width: 8px; }
+    @media (min-width: 600px) {
+      #terminal-body {
+        padding: 16px 20px;
+        font-size: 0.92rem;
+        line-height: 1.6;
+        gap: 14px;
+      }
+    }
+    #terminal-body::-webkit-scrollbar { width: 6px; }
     #terminal-body::-webkit-scrollbar-track { background: var(--term-bg); }
-    #terminal-body::-webkit-scrollbar-thumb { background: var(--term-border); border-radius: 4px; }
-    #terminal-body::-webkit-scrollbar-thumb:hover { background: #2b354f; }
+    #terminal-body::-webkit-scrollbar-thumb { background: var(--term-border); border-radius: 3px; }
 
-    /* ASCII Banner */
-    .banner {
+    /* ASCII Banner Responsive */
+    .banner-desktop {
+      display: none;
       color: var(--term-green);
       font-weight: 700;
       white-space: pre;
-      font-size: 0.65rem;
+      font-size: 0.8rem;
       line-height: 1.15;
       margin-bottom: 8px;
       overflow-x: auto;
       text-shadow: 0 0 8px rgba(0, 255, 102, 0.4);
     }
-    @media (min-width: 768px) {
-      .banner { font-size: 0.8rem; }
+    .banner-mobile {
+      display: block;
+      color: var(--term-green);
+      font-weight: 700;
+      font-size: 0.76rem;
+      border: 1px dashed rgba(0, 255, 102, 0.4);
+      background: rgba(0, 255, 102, 0.04);
+      border-radius: 6px;
+      padding: 8px 10px;
+      margin-bottom: 6px;
+      text-shadow: 0 0 6px rgba(0, 255, 102, 0.3);
     }
+    @media (min-width: 768px) {
+      .banner-desktop { display: block; }
+      .banner-mobile { display: none; }
+    }
+
     .sys-info {
       color: var(--term-muted);
-      font-size: 0.82rem;
-      margin-bottom: 12px;
+      font-size: 0.78rem;
+      margin-bottom: 8px;
       border-left: 2px solid var(--term-green);
-      padding-left: 10px;
+      padding-left: 8px;
+      line-height: 1.5;
+    }
+    @media (min-width: 600px) {
+      .sys-info {
+        font-size: 0.82rem;
+        padding-left: 10px;
+        margin-bottom: 12px;
+      }
     }
     .sys-info span { color: var(--term-cyan); font-weight: 600; }
 
@@ -204,6 +256,8 @@ HTML_PAGE = """<!DOCTYPE html>
       display: flex;
       flex-direction: column;
       gap: 4px;
+      width: 100%;
+      overflow-x: hidden;
     }
     .prompt-line {
       display: flex;
@@ -211,20 +265,22 @@ HTML_PAGE = """<!DOCTYPE html>
       align-items: center;
       gap: 6px;
       font-weight: 600;
+      font-size: 0.85rem;
     }
     .p-user { color: var(--term-green); font-weight: 700; }
     .p-sep { color: var(--term-muted); }
     .p-path { color: var(--term-cyan); }
-    .p-symbol { color: var(--term-green); }
-    .p-cmd { color: #ffffff; font-weight: 600; word-break: break-all; }
+    .p-symbol { color: var(--term-green); font-weight: 800; }
+    .p-cmd { color: #ffffff; font-weight: 600; word-break: break-word; }
 
     /* Bot Output Card */
     .output-content {
       color: #c9d1d9;
-      margin-top: 4px;
+      margin-top: 2px;
       padding-left: 8px;
       border-left: 1px dashed rgba(255, 255, 255, 0.15);
       word-break: break-word;
+      overflow-wrap: break-word;
     }
     .output-content p { margin: 6px 0; }
 
@@ -233,17 +289,18 @@ HTML_PAGE = """<!DOCTYPE html>
       background: #06080c;
       border: 1px solid #1a2234;
       border-radius: 6px;
-      margin: 10px 0;
+      margin: 8px 0;
       overflow: hidden;
+      width: 100%;
     }
     .code-header {
       background: #0f1420;
       border-bottom: 1px solid #1a2234;
-      padding: 6px 12px;
+      padding: 6px 10px;
       display: flex;
       justify-content: space-between;
       align-items: center;
-      font-size: 0.75rem;
+      font-size: 0.72rem;
       color: var(--term-cyan);
       font-weight: 600;
     }
@@ -251,44 +308,53 @@ HTML_PAGE = """<!DOCTYPE html>
       background: #182030;
       border: 1px solid var(--term-border);
       color: var(--term-muted);
-      padding: 3px 8px;
+      padding: 4px 10px;
       border-radius: 4px;
       font-size: 0.7rem;
       font-family: var(--font-mono);
       cursor: pointer;
       transition: all 0.15s;
+      min-height: 28px;
+      display: inline-flex;
+      align-items: center;
+      touch-action: manipulation;
     }
-    .copy-btn:hover {
+    .copy-btn:active, .copy-btn:hover {
       background: var(--term-cyan);
       color: #0c0e14;
       border-color: var(--term-cyan);
     }
     pre {
-      padding: 12px 14px;
+      padding: 10px 12px;
       overflow-x: auto;
+      -webkit-overflow-scrolling: touch;
       font-family: var(--font-mono);
-      font-size: 0.88rem;
+      font-size: 0.82rem;
       color: #a5d6ff;
-      line-height: 1.5;
+      line-height: 1.45;
+    }
+    @media (min-width: 600px) {
+      pre { font-size: 0.88rem; padding: 12px 14px; }
     }
     code {
       font-family: var(--font-mono);
       color: var(--term-amber);
       background: rgba(255, 184, 108, 0.1);
-      padding: 2px 5px;
+      padding: 2px 4px;
       border-radius: 3px;
       font-size: 0.88em;
+      word-break: break-word;
     }
-    pre code { background: none; padding: 0; color: inherit; }
+    pre code { background: none; padding: 0; color: inherit; word-break: normal; }
 
     /* Blinking Cursor */
     .cursor-block {
       display: inline-block;
       width: 8px;
-      height: 15px;
+      height: 14px;
       background: var(--term-cursor);
       vertical-align: middle;
-      margin-left: 3px;
+      margin-left: 2px;
       animation: blink 0.9s infinite;
       box-shadow: 0 0 6px var(--term-cursor);
     }
@@ -298,11 +364,12 @@ HTML_PAGE = """<!DOCTYPE html>
     .cli-chips {
       background: #0a0d14;
       border-top: 1px solid var(--term-border);
-      padding: 8px 16px;
+      padding: 8px 12px;
       display: flex;
       gap: 8px;
       overflow-x: auto;
       scrollbar-width: none;
+      -webkit-overflow-scrolling: touch;
       flex-shrink: 0;
     }
     .cli-chips::-webkit-scrollbar { display: none; }
@@ -310,9 +377,9 @@ HTML_PAGE = """<!DOCTYPE html>
       background: var(--term-card);
       border: 1px solid var(--term-border);
       color: var(--term-muted);
-      padding: 5px 12px;
+      padding: 6px 12px;
       border-radius: 4px;
-      font-size: 0.78rem;
+      font-size: 0.74rem;
       font-family: var(--font-mono);
       cursor: pointer;
       white-space: nowrap;
@@ -320,11 +387,14 @@ HTML_PAGE = """<!DOCTYPE html>
       display: flex;
       align-items: center;
       gap: 6px;
+      min-height: 34px;
+      user-select: none;
+      touch-action: manipulation;
     }
-    .chip:hover {
+    .chip:active, .chip:hover {
       border-color: var(--term-green);
       color: var(--term-green);
-      background: rgba(0, 255, 102, 0.05);
+      background: rgba(0, 255, 102, 0.08);
     }
     .chip span { color: var(--term-green); font-weight: 700; }
 
@@ -332,20 +402,29 @@ HTML_PAGE = """<!DOCTYPE html>
     #input-bar {
       background: #090c12;
       border-top: 1px solid var(--term-border);
-      padding: 12px 18px;
+      padding: 10px calc(12px + var(--sar)) calc(10px + var(--sab)) calc(12px + var(--sal));
       display: flex;
       align-items: center;
       gap: 8px;
       flex-shrink: 0;
+      min-height: 52px;
     }
     .input-prefix {
       display: flex;
       align-items: center;
-      gap: 6px;
-      font-size: 0.9rem;
+      gap: 4px;
+      font-size: 0.85rem;
       white-space: nowrap;
       user-select: none;
     }
+    
+    /* Shorten prompt prefix on small mobile screens */
+    .mobile-hide { display: inline; }
+    @media (max-width: 600px) {
+      .mobile-hide { display: none; }
+      .input-prefix .p-symbol { font-size: 1.1rem; }
+    }
+
     #cli-input {
       flex: 1;
       background: transparent;
@@ -353,23 +432,31 @@ HTML_PAGE = """<!DOCTYPE html>
       outline: none;
       color: #ffffff;
       font-family: var(--font-mono);
-      font-size: 0.95rem;
+      font-size: 16px; /* 16px prevents automatic iOS Safari zoom */
       font-weight: 500;
       caret-color: var(--term-cursor);
+      min-width: 0;
     }
     #send-btn {
       background: #151b28;
       border: 1px solid var(--term-border);
       color: var(--term-green);
       border-radius: 4px;
-      padding: 6px 14px;
+      padding: 8px 14px;
       font-family: var(--font-mono);
       font-size: 0.8rem;
       font-weight: 700;
       cursor: pointer;
       transition: all 0.2s;
+      min-height: 38px;
+      min-width: 64px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      user-select: none;
+      touch-action: manipulation;
     }
-    #send-btn:hover {
+    #send-btn:active, #send-btn:hover {
       background: var(--term-green);
       color: #0c0e14;
       border-color: var(--term-green);
@@ -389,15 +476,15 @@ HTML_PAGE = """<!DOCTYPE html>
     <header>
       <div class="window-controls">
         <span class="dot close" title="Clear Screen" onclick="clearTerminal()"></span>
-        <span class="dot min" title="Minimize"></span>
+        <span class="dot min mobile-hide" title="Minimize"></span>
         <span class="dot max" title="Toggle Fullscreen" onclick="toggleFullscreen()"></span>
       </div>
 
       <div class="window-title">
         <span class="active-host">cybersec@qwen-v2</span>
-        <span class="p-sep">:</span>
-        <span class="p-path">~</span>
-        <span class="badge">v2.0 Active</span>
+        <span class="p-sep mobile-hide">:</span>
+        <span class="p-path mobile-hide">~</span>
+        <span class="badge">v2.0</span>
       </div>
 
       <div class="window-actions">
@@ -407,8 +494,8 @@ HTML_PAGE = """<!DOCTYPE html>
 
     <!-- Terminal Main Screen -->
     <div id="terminal-body">
-      <!-- ASCII Art Banner -->
-      <div class="banner">
+      <!-- Desktop ASCII Banner -->
+      <div class="banner banner-desktop">
    ______      __              ____                    _    ______ 
   / ____/_  __/ /_  ___  _____/ __ \_      _____  ____| |  / /__ \ 
  / /   / / / / __ \/ _ \/ ___/ / / / | /| / / _ \/ __ \ | / /__/ / 
@@ -417,12 +504,17 @@ HTML_PAGE = """<!DOCTYPE html>
      /____/                                                        
       </div>
 
+      <!-- Mobile Clean Banner -->
+      <div class="banner banner-mobile">
+        ⚡ CYBERQWEN v2.0 // THE HACK MACHINE<br>
+        <span style="color:var(--term-muted); font-size:0.7rem; font-weight:normal;">Offensive Security &amp; CTF Specialist Brain</span>
+      </div>
+
       <div class="sys-info">
         [+] <span>HOST:</span> CyberQwen v2 (The Hack Machine)<br>
-        [+] <span>CORE:</span> Qwen 2.5 3B QLoRA (r=64, alpha=128) | llama.cpp AVX2<br>
-        [+] <span>CORPUS:</span> 10,469 Pure Offensive Security & CTF Execution Pairs<br>
-        [+] <span>STATUS:</span> 100% Uncensored • Air-Gapped Local Inference • Zero Cloud Cost<br>
-        [*] Type your exploit query below, or click any quick command shortcut.
+        [+] <span>CORE:</span> Qwen 2.5 3B QLoRA (r=64, alpha=128) | AVX2<br>
+        [+] <span>STATUS:</span> 10,469 Exploit Pairs • 100% Uncensored • Local<br>
+        [*] Type exploit query or tap chips below.
       </div>
     </div>
 
@@ -441,19 +533,19 @@ HTML_PAGE = """<!DOCTYPE html>
         <span>$</span> sqli bypass
       </div>
       <div class="chip" onclick="runShortcut('Write a bash one-liner to scan ports 1-1024 on 192.168.1.1 without nmap')">
-        <span>$</span> raw bash portscan
+        <span>$</span> bash portscan
       </div>
     </div>
 
     <!-- Interactive Shell Command Input -->
     <div id="input-bar">
       <div class="input-prefix">
-        <span class="p-user">cybersec@qwen-v2</span>
-        <span class="p-sep">:</span>
-        <span class="p-path">~</span>
+        <span class="p-user mobile-hide">cybersec@qwen-v2</span>
+        <span class="p-sep mobile-hide">:</span>
+        <span class="p-path mobile-hide">~</span>
         <span class="p-symbol">$</span>
       </div>
-      <input type="text" id="cli-input" placeholder="Type prompt (e.g. reverse shell, gtfobins, buffer overflow)..." autocomplete="off" spellcheck="false" autofocus>
+      <input type="text" id="cli-input" placeholder="Type prompt (e.g. revshell, gtfobins)..." autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false">
       <button id="send-btn" onclick="executeCommand()">EXEC</button>
     </div>
   </div>
@@ -462,10 +554,22 @@ HTML_PAGE = """<!DOCTYPE html>
     const termBody = document.getElementById('terminal-body');
     const cliInput = document.getElementById('cli-input');
     const sendBtn = document.getElementById('send-btn');
+    const termWindow = document.getElementById('terminal-window');
 
     // Bash Command History
     let history = [];
     let historyIdx = -1;
+
+    // Mobile Virtual Keyboard Viewport Resize Handler
+    if (window.visualViewport) {
+      window.visualViewport.addEventListener('resize', () => {
+        termWindow.style.height = `${window.visualViewport.height}px`;
+        setTimeout(() => { termBody.scrollTop = termBody.scrollHeight; }, 50);
+      });
+      window.visualViewport.addEventListener('scroll', () => {
+        termWindow.style.height = `${window.visualViewport.height}px`;
+      });
+    }
 
     cliInput.addEventListener('keydown', function(e) {
       if (e.key === 'Enter') {
@@ -536,6 +640,16 @@ HTML_PAGE = """<!DOCTYPE html>
           btn.style.borderColor = '';
           btn.style.color = '';
         }, 2000);
+      }).catch(() => {
+        // Fallback for non-https contexts
+        const ta = document.createElement('textarea');
+        ta.value = codeText;
+        document.body.appendChild(ta);
+        ta.select();
+        document.execCommand('copy');
+        document.body.removeChild(ta);
+        btn.innerText = '[ ✓ COPIED ]';
+        setTimeout(() => { btn.innerText = '[ COPY ]'; }, 2000);
       });
     }
 
@@ -545,10 +659,12 @@ HTML_PAGE = """<!DOCTYPE html>
     }
 
     function clearTerminal() {
-      const banner = document.querySelector('.banner');
+      const bannerD = document.querySelector('.banner-desktop');
+      const bannerM = document.querySelector('.banner-mobile');
       const sysInfo = document.querySelector('.sys-info');
       termBody.innerHTML = '';
-      if (banner) termBody.appendChild(banner);
+      if (bannerD) termBody.appendChild(bannerD);
+      if (bannerM) termBody.appendChild(bannerM);
       if (sysInfo) termBody.appendChild(sysInfo);
       cliInput.focus();
     }
@@ -564,6 +680,11 @@ HTML_PAGE = """<!DOCTYPE html>
     async function executeCommand() {
       const cmd = cliInput.value.trim();
       if (!cmd) return;
+
+      // Blur mobile keyboard so screen is readable on small phones
+      if (window.innerWidth < 600) {
+        cliInput.blur();
+      }
 
       // Handle Built-in Terminal Commands
       if (cmd.toLowerCase() === 'clear' || cmd.toLowerCase() === 'cls') {
@@ -591,9 +712,6 @@ HTML_PAGE = """<!DOCTYPE html>
       row.className = 'term-row';
       row.innerHTML = `
         <div class="prompt-line">
-          <span class="p-user">cybersec@qwen-v2</span>
-          <span class="p-sep">:</span>
-          <span class="p-path">~</span>
           <span class="p-symbol">$</span>
           <span class="p-cmd">${escapeHtml(cmd)}</span>
         </div>
@@ -643,7 +761,6 @@ HTML_PAGE = """<!DOCTYPE html>
         outputContainer.innerHTML = formatTerminalMarkdown(fullText);
         cliInput.disabled = false;
         sendBtn.disabled = false;
-        cliInput.focus();
         termBody.scrollTop = termBody.scrollHeight;
       }
     }
