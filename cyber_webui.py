@@ -13,7 +13,7 @@ import urllib.error
 from http.server import ThreadingHTTPServer, BaseHTTPRequestHandler
 
 OLLAMA_API_URL = "http://127.0.0.1:11434/api/generate"
-MODEL_NAME = "cybersec-qwen"
+MODEL_NAME = os.environ.get("CYBER_MODEL", "cybersec-qwen-v2")
 PORT = int(os.environ.get("PORT", 8080))
 
 HTML_PAGE = """<!DOCTYPE html>
@@ -21,7 +21,7 @@ HTML_PAGE = """<!DOCTYPE html>
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>CyberQwen-2B Copilot</title>
+  <title>CyberQwen v2 (Hack Machine)</title>
   <style>
     :root {
       --bg: #0d1117;
@@ -156,8 +156,8 @@ HTML_PAGE = """<!DOCTYPE html>
 <body>
   <header>
     <div class="header-title">
-      <span>🛡️ CyberQwen-2B</span>
-      <span class="badge">100% Offline</span>
+      <span>🛡️ CyberQwen v2</span>
+      <span class="badge">v2.0 Active</span>
     </div>
     <div style="font-size: 0.75rem; color: var(--text-muted);">Intel i5 • 8GB RAM</div>
   </header>
@@ -165,21 +165,21 @@ HTML_PAGE = """<!DOCTYPE html>
   <div id="chat-container">
     <div class="message-row bot">
       <div class="bubble">
-        👋 <b>CyberQwen-2B is ready.</b><br>
-        Ask for exploit mechanics, detection engineering rules (Sigma/YARA), log triage, or script analysis.
+        👋 <b>CyberQwen v2 (The Hack Machine) is ready.</b><br>
+        Trained on 10,469 pure offensive security exploits & CTF execution pairs. Ask for exploit syntax, reverse shells, privilege escalation, or binary analysis.
       </div>
     </div>
   </div>
 
   <div class="quick-chips">
-    <div class="chip" onclick="quickAsk('Generate a Sigma rule for LSASS dump via Event ID 10')">🕵️ Detect LSASS (Sigma)</div>
-    <div class="chip" onclick="quickAsk('Generate a YARA rule for UPX packed PE executables')">🦠 UPX Packed (YARA)</div>
+    <div class="chip" onclick="quickAsk('Give me the exact command to spawn a root shell if sudo find is allowed')">⚡ sudo find exploit</div>
+    <div class="chip" onclick="quickAsk('Write a minimal Python3 reverse shell one-liner for port 4444')">🔌 Python3 Reverse Shell</div>
     <div class="chip" onclick="quickAsk('Provide an error-based SQL injection PoC payload and remediation')">💉 Error-based SQLi</div>
-    <div class="chip" onclick="quickAsk('How to detect Kerberoasting in Active Directory in 2 bullet points')">🏢 Kerberoasting Triage</div>
+    <div class="chip" onclick="quickAsk('How to exploit SUID PATH hijacking vulnerability in 3 steps')">💀 SUID PATH Hijack</div>
   </div>
 
   <div id="input-container">
-    <textarea id="prompt-input" rows="1" placeholder="Ask CyberQwen-2B anything..." onkeydown="handleKey(event)"></textarea>
+    <textarea id="prompt-input" rows="1" placeholder="Ask CyberQwen v2 anything..." onkeydown="handleKey(event)"></textarea>
     <button id="send-btn" onclick="sendMessage()">
       <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
         <line x1="22" y1="2" x2="11" y2="13"></line>
